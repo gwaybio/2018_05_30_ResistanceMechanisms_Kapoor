@@ -15,7 +15,7 @@ from pycytominer import (
 )
 
 
-def load_config(config_file, append_sql_prefix=True):
+def load_config(config_file, append_sql_prefix=True, local=False):
     # Load configuration file info
     if append_sql_prefix:
         sql_prefix = "sqlite:////"
@@ -33,12 +33,17 @@ def load_config(config_file, append_sql_prefix=True):
                 batch = data["batch"]
                 plates = [str(x) for x in data["plates"]]
                 profile_config[batch] = {}
+
+                if local:
+                    sql_dir = os.path.join(pipeline["local_dir"], "0.generate-profiles", "profiles")
+                else:
+                    sql_dir = os.path.join(pipeline["workspace_dir"], "backend")
+
                 profile_config[batch]["plates"] = {
                     x: "{}{}".format(
                         sql_prefix,
                         os.path.join(
-                            pipeline["workspace_dir"],
-                            "backend",
+                            sql_dir,
                             batch,
                             x,
                             "{}.sqlite".format(x),
@@ -48,7 +53,7 @@ def load_config(config_file, append_sql_prefix=True):
                 }
 
     return pipeline, profile_config
-               
+
 
 
 def process_pipeline(pipeline, option):

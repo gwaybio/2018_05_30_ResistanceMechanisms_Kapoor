@@ -1,6 +1,7 @@
 ---
 pipeline: 2018_05_30_ResistanceMechanisms_Kapoor
 workspace_dir: /home/ubuntu/bucket/projects/2018_05_30_ResistanceMechanisms_Kapoor/workspace
+local_dir: /Users/gway/work/projects/2018_05_30_ResistanceMechanisms_Kapoor/workspace/software/2018_05_30_ResistanceMechanisms_Kapoor
 output_dir: profiles
 platemap_well_column: Metadata_well_position
 aggregate:

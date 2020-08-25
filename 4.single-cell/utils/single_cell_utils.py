@@ -47,11 +47,7 @@ def normalize_sc(sc_df, scaler_method="standard"):
 
 
 def process_data(
-    connection,
-    imagenumber,
-    image_df,
-    feature_filter,
-    seed=123,
+    connection, imagenumber, image_df, feature_filter, seed=123,
 ):
     # Load compartments
     cell_df = load_compartment_site("cells", connection, imagenumber)
@@ -90,7 +86,7 @@ def process_sites(
     feature_filter,
     seed=123,
     scaler_method="standard",
-    normalize=True
+    normalize=True,
 ):
     data_df = {}
     for imagenumber in imagenumbers:
@@ -99,7 +95,7 @@ def process_sites(
             imagenumber=imagenumber,
             image_df=image_df,
             feature_filter=feature_filter,
-            seed=seed
+            seed=seed,
         )
 
     data_df = pd.concat(data_df).reset_index(drop=True)

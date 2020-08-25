@@ -3,7 +3,9 @@ import pandas as pd
 from pycytominer.cyto_utils import infer_cp_features
 
 
-def load_data(return_meta=False, shuffle_row_order=False, holdout=False, othertreatment=False):
+def load_data(
+    return_meta=False, shuffle_row_order=False, holdout=False, othertreatment=False
+):
     output_data_dict = {"train": {}, "test": {}}
     train_file = pathlib.Path("data", "single_cell_train.tsv.gz")
     train_df = pd.read_csv(train_file, sep="\t")
@@ -42,9 +44,13 @@ def load_data(return_meta=False, shuffle_row_order=False, holdout=False, othertr
         output_data_dict["test"]["meta"] = test_df.drop(cp_features, axis="columns")
 
         if holdout:
-            output_data_dict["holdout"]["meta"] = holdout_df.drop(cp_features, axis="columns")
+            output_data_dict["holdout"]["meta"] = holdout_df.drop(
+                cp_features, axis="columns"
+            )
 
         if othertreatment:
-            output_data_dict["othertreatment"]["meta"] = other_df.drop(cp_features, axis="columns")
+            output_data_dict["othertreatment"]["meta"] = other_df.drop(
+                cp_features, axis="columns"
+            )
 
     return output_data_dict

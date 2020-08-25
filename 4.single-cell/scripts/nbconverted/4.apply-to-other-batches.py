@@ -12,6 +12,7 @@ import sys
 import joblib
 import pathlib
 import sqlite3
+import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 
@@ -27,19 +28,20 @@ from scripts.profile_util import load_config
 # In[2]:
 
 
-pd.np.random.seed(1234)
+np.random.seed(1234)
 
 
 # In[3]:
 
 
 # Set constants
-batch = "2019_11_20_Batch6"
-plate = 217762
+batch = "2019_03_20_Batch2"
+plate = "207106_exposure320"
 
 feature_filter = ["Object", "Location", "Count", "Parent"]
 scaler_method = "standard"
 seed = 123
+n_sample_sites_per_well = 3
 
 
 # In[4]:
@@ -132,7 +134,7 @@ assert len(image_df.ImageNumber.unique()) == image_df.shape[0]
 
 
 # Randomly sample three sites per well to reduce number of single cells to store
-sampled_image_df = image_df.groupby("Metadata_Well").apply(pd.DataFrame.sample, n=3)
+sampled_image_df = image_df.groupby("Metadata_Well").apply(pd.DataFrame.sample, n=n_sample_sites_per_well)
 
 sampled_image_df.head()
 
@@ -226,7 +228,7 @@ real_scores_df = model_apply(
     y_recode=y_recode_reverse,
     data_fit="other_batch",
     shuffled=False,
-    predict_proba=True
+    predict_proba=False
 )
 
 output_file = pathlib.Path(f"scores/{batch}_{plate}_othersinglecells.tsv.gz")

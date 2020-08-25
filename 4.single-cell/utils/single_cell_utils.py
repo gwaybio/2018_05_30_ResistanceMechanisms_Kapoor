@@ -47,10 +47,13 @@ def normalize_sc(sc_df, scaler_method="standard"):
 
 
 def process_data(
-    connection, imagenumber, image_df, feature_filter, seed=123,
+    connection, imagenumber, image_df, feature_filter, random_sample="all", seed=123,
 ):
     # Load compartments
     cell_df = load_compartment_site("cells", connection, imagenumber)
+    if random_sample != "all":
+        cell_df = cell_df.sample(n=random_sample, axis="index")
+
     cyto_df = load_compartment_site("cytoplasm", connection, imagenumber)
     nuc_df = load_compartment_site("nuclei", connection, imagenumber)
 

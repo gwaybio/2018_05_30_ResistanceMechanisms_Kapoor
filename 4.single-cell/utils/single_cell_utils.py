@@ -52,7 +52,7 @@ def process_data(
     # Load compartments
     cell_df = load_compartment_site("cells", connection, imagenumber)
     if random_sample != "all":
-        cell_df = cell_df.sample(n=random_sample, axis="index")
+        cell_df = cell_df.sample(frac=random_sample, axis="index")
 
     cyto_df = load_compartment_site("cytoplasm", connection, imagenumber)
     nuc_df = load_compartment_site("nuclei", connection, imagenumber)
@@ -89,6 +89,7 @@ def process_sites(
     feature_filter,
     seed=123,
     scaler_method="standard",
+    random_sample="all",
     normalize=True,
 ):
     data_df = {}
@@ -98,6 +99,7 @@ def process_sites(
             imagenumber=imagenumber,
             image_df=image_df,
             feature_filter=feature_filter,
+            random_sample=random_sample,
             seed=seed,
         )
 

@@ -35,13 +35,13 @@ np.random.seed(1234)
 
 
 # Set constants
-batch = "2019_03_20_Batch2"
-plate = "207106_exposure320"
+batch = "2019_11_20_Batch6"
+plate = 217762
 
 feature_filter = ["Object", "Location", "Count", "Parent"]
 scaler_method = "standard"
 seed = 123
-n_sample_sites_per_well = 3
+n_randomly_sampled_cell_frac_per_site = 0.1
 
 
 # In[4]:
@@ -104,7 +104,7 @@ single_cell_sqlite = single_cell_files[batch]["plates"][str(plate)]
 conn = sqlite3.connect(single_cell_sqlite)
 
 
-# In[9]:
+# In[ ]:
 
 
 image_cols = f"TableNumber, ImageNumber, {plate_column}, {well_column}"
@@ -123,36 +123,27 @@ print(image_df.shape)
 image_df.head()
 
 
-# In[10]:
+# In[ ]:
 
 
 # Assert that image number is unique
 assert len(image_df.ImageNumber.unique()) == image_df.shape[0]
 
 
-# In[11]:
+# In[ ]:
 
 
-# Randomly sample three sites per well to reduce number of single cells to store
-sampled_image_df = image_df.groupby("Metadata_Well").apply(pd.DataFrame.sample, n=n_sample_sites_per_well)
-
-sampled_image_df.head()
+get_ipython().run_cell_magic('time', '', 'sc_df = process_sites(\n    connection=conn,\n    imagenumbers=image_df.ImageNumber.tolist(),\n    image_df=image_df,\n    feature_filter=feature_filter,\n    seed=seed,\n    scaler_method=scaler_method,\n    random_sample=n_randomly_sampled_cell_frac_per_site,\n    normalize=True\n)')
 
 
-# In[12]:
-
-
-get_ipython().run_cell_magic('time', '', 'sc_df = process_sites(\n    connection=conn,\n    imagenumbers=sampled_image_df.ImageNumber.tolist(),\n    image_df=image_df,\n    feature_filter=feature_filter,\n    seed=seed,\n    scaler_method=scaler_method,\n    normalize=True\n)')
-
-
-# In[13]:
+# In[ ]:
 
 
 print(sc_df.shape)
 sc_df.head()
 
 
-# In[14]:
+# In[ ]:
 
 
 # Load test set data and reindex to match feature list
@@ -165,7 +156,7 @@ print(test_df.shape)
 test_df.head()
 
 
-# In[15]:
+# In[ ]:
 
 
 coef_file = pathlib.Path("coefficients/single_cell_multiclass_coefficients.tsv")
@@ -175,14 +166,14 @@ print(coef_df.shape)
 coef_df.head()
 
 
-# In[16]:
+# In[ ]:
 
 
 # Assert the feature order and the model are equivalent
 assert cp_feature_order == coef_df.feature.tolist()
 
 
-# In[17]:
+# In[ ]:
 
 
 # Reindex features in the proper order before saving
@@ -194,7 +185,7 @@ print(sc_reindexed_df.shape)
 sc_reindexed_df.head()
 
 
-# In[18]:
+# In[ ]:
 
 
 # Output file
@@ -204,21 +195,21 @@ sc_reindexed_df.to_csv(sc_output_file, sep="\t", compression="gzip", index=False
 
 # ## Apply Models
 
-# In[19]:
+# In[ ]:
 
 
 y_recode = {"WT parental": 0, "Clone A": 1, "Clone E": 2}
 y_recode_reverse = {y: x for x, y in y_recode.items()}
 
 
-# In[20]:
+# In[ ]:
 
 
 sc_df = sc_reindexed_df.reindex(cp_feature_order, axis="columns")
 meta_df = sc_reindexed_df.reindex(meta_features, axis="columns")
 
 
-# In[21]:
+# In[ ]:
 
 
 real_scores_df = model_apply(
@@ -228,17 +219,17 @@ real_scores_df = model_apply(
     y_recode=y_recode_reverse,
     data_fit="other_batch",
     shuffled=False,
-    predict_proba=False
+    predict_proba=True
 )
 
-output_file = pathlib.Path(f"scores/{batch}_{plate}_othersinglecells.tsv.gz")
+output_file = pathlib.Path(f"scores/{batch}_{plate}_real_model_othersinglecells.tsv.gz")
 real_scores_df.to_csv(output_file, sep="\t", compression="gzip", index=False)
 
 print(real_scores_df.shape)
 real_scores_df.head()
 
 
-# In[22]:
+# In[ ]:
 
 
 shuffled_scores_df = model_apply(

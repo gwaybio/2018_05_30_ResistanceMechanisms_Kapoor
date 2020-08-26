@@ -7,12 +7,7 @@ import yaml
 import pandas as pd
 
 from pycytominer.aggregate import AggregateProfiles
-from pycytominer import (
-    annotate,
-    normalize,
-    feature_select,
-    audit
-)
+from pycytominer import annotate, normalize, feature_select, audit
 
 
 def load_config(config_file, append_sql_prefix=True, local=False):
@@ -35,25 +30,21 @@ def load_config(config_file, append_sql_prefix=True, local=False):
                 profile_config[batch] = {}
 
                 if local:
-                    sql_dir = os.path.join(pipeline["local_dir"], "0.generate-profiles", "profiles")
+                    sql_dir = os.path.join(
+                        pipeline["local_dir"], "0.generate-profiles", "profiles"
+                    )
                 else:
                     sql_dir = os.path.join(pipeline["workspace_dir"], "backend")
 
                 profile_config[batch]["plates"] = {
                     x: "{}{}".format(
                         sql_prefix,
-                        os.path.join(
-                            sql_dir,
-                            batch,
-                            x,
-                            "{}.sqlite".format(x),
-                        )
+                        os.path.join(sql_dir, batch, x, "{}.sqlite".format(x),),
                     )
                     for x in plates
                 }
 
     return pipeline, profile_config
-
 
 
 def process_pipeline(pipeline, option):

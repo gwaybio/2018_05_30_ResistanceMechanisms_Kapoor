@@ -49,7 +49,7 @@ for batch in process_which_plates:
     for plate in process_which_plates[batch]["plates"]:
         print(f"Now processing... Batch: {batch}, Plate: {plate}")
         # Generate output files
-        output_dir = pathlib.Path(f"{output_dir}/{batch}")
+        output_dir = pathlib.Path(f"{output_base_dir}/{batch}")
         output_dir.mkdir(parents=True, exist_ok=True)
         output_file = pathlib.Path(
             f"{output_dir}/{plate}_singlecell_normalized_feature_select.csv.gz"

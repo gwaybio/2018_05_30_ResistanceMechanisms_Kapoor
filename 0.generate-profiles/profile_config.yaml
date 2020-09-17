@@ -74,7 +74,7 @@ batch: 2019_11_22_Batch7
 plates:
   - 217766
   - 217768
-process: false
+process: true
 ---
 batch: 2020_07_02_Batch8
 plates:
